@@ -1,0 +1,55 @@
+﻿#uuid: language
+players:
+
+sql:
+  enabled: false
+  host: 'localhost'
+  database: 'server'
+  port: 3306
+  account: 'admin'
+  password: 'root'
+  table: 'players_language'
+messages:
+  languageSelection:
+    french: 'Choisissez un langage'
+    english: 'Select a language'
+    dutch: 'Selecteer een taal'
+    deutsch: 'Wählen Sie eine Sprache'
+    spanish: 'Seleccione un idioma'
+    portouguese: 'Selecione um idioma'
+    italian: 'Scegli una lingua'
+    arabish: 'اختر اللغة'
+    polish: 'Wybierz język'
+    chinese: '选择一种语言'
+  languageChange:
+    french: 'La langue a été modifiée avec succès.'
+    english: 'The language has been successfully changed.'
+    dutch: 'De taal is succesvol verandert.'
+    deutsch: 'Die Sprache wurde erfolgreich geändert.'
+    spanish: 'El lenguaje se ha cambiado correctamente.'
+    portouguese: 'O idioma foi alterado com sucesso.'
+    italian: 'La lingua è stata cambiata con successo.'
+    polish: 'Język został pomyślnie zmieniony.'
+    arabish: 'تم تغيير اللغة بنجاح'
+    chinese: '语言已经被成功更改'
+
+# In conversion table you don't have to specify country who speak your default language as it's a fallback.
+
+# Conversion array minecraft locale code (see http://minecraft.gamepedia.com/Language) => plugin locale
+locale:
+  fr_FR: FRENCH
+
+# Conversion array IsoCode (please see ALPHA-2 code on http://www.nationsonline.org/oneworld/country_code_list.htm) => plugin locale
+iso:
+  FR: FRENCH
+  BE: FRENCH
+
+#allowItalicNametag: If on true, renamed nametags with the anvil will work to open the language menu.
+config:
+  allowItalicNametag: false
+  enableCommand: false
+  enableNameTag: true
+  defaultLanguage: ENGLISH
+# Value could be set to 'LOCALE' or 'GEOLOC'
+  detectLanguage: 'LOCALE'
+  
