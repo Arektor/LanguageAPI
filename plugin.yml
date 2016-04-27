@@ -1,0 +1,10 @@
+name: PlayerLanguageAPI
+main: fr.tenebrae.PlayerLanguage.LanguageAPI
+authors: [Arektor]
+version: 0.5.1
+description: Translation
+softdepend: [SQLibrary]
+commands:
+   languages:
+      description: Languages command
+      usage: /<command>
