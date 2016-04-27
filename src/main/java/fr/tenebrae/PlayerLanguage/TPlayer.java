@@ -29,9 +29,12 @@ public class TPlayer {
 		}
 		try {
 			String iso = LanguageAPI.ipreader.city(((CraftPlayer)p ).getAddress().getAddress()).getCountry().getIsoCode();
-			if (LanguageAPI.plugin.config.contains("iso."+iso)) {
+			if (LanguageAPI.plugin.config.contains("iso."+iso))
 				setLanguage(Languages.valueOf(LanguageAPI.plugin.config.getString("iso."+iso)));
-			}
+			else if (localeLang != null)
+				setLanguage(localeLang);
+			else
+				setLanguage(this.language);
 		} catch (Exception e) {
 			if (localeLang != null)
 				setLanguage(localeLang);
