@@ -1,6 +1,8 @@
-﻿#uuid: language
-players:
-
+# DetectLanguage Value could be set to LOCALE or GEOLOC
+# To set 'locale' list properly please see http://minecraft.gamepedia.com/Language
+# To set 'iso' list properly please see ALPHA-2 code on http://www.nationsonline.org/oneworld/country_code_list.htm
+# allowItalicNametag: If on true, renamed nametags with the anvil will work to open the language menu.
+# Protips: In conversion table (iso and locale variable) you don't have to specify country who speak your default language as it's a fallback.
 sql:
   enabled: false
   host: 'localhost'
@@ -32,24 +34,15 @@ messages:
     polish: 'Język został pomyślnie zmieniony.'
     arabish: 'تم تغيير اللغة بنجاح'
     chinese: '语言已经被成功更改'
-
-# In conversion table you don't have to specify country who speak your default language as it's a fallback.
-
-# Conversion array minecraft locale code (see http://minecraft.gamepedia.com/Language) => plugin locale
 locale:
   fr_FR: FRENCH
-
-# Conversion array IsoCode (please see ALPHA-2 code on http://www.nationsonline.org/oneworld/country_code_list.htm) => plugin locale
 iso:
   FR: FRENCH
   BE: FRENCH
-
-#allowItalicNametag: If on true, renamed nametags with the anvil will work to open the language menu.
 config:
   allowItalicNametag: false
   enableCommand: false
   enableNameTag: true
   defaultLanguage: ENGLISH
-# Value could be set to 'LOCALE' or 'GEOLOC'
-  detectLanguage: 'LOCALE'
-  
+  detectLanguage: LOCALE
+players:

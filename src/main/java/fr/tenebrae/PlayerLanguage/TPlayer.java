@@ -16,19 +16,25 @@ public class TPlayer {
 		this.p = p;
 		this.language = Languages.valueOf(LanguageAPI.plugin.config.getString("config.defaultLanguage"));
 		String locale = ((CraftPlayer) p).getHandle().locale;
-		if (isLanguageSet()) return;
+		if (isLanguageSet())  {
+			Languages lang = getStoredLanguage();
+			if (lang != null) {
+				this.language = lang;
+				return;
+			}
+		}
 		
 		Languages localeLang = null;
 		if (LanguageAPI.plugin.config.contains("locale."+locale)) {
 			localeLang = Languages.valueOf(LanguageAPI.plugin.config.getString("locale."+locale));
 		}
 		
-		if (LanguageAPI.plugin.config.getString("config.defaultLanguage").equalsIgnoreCase("detectLanguage") && localeLang != null) {
+		if (LanguageAPI.plugin.config.getString("config.detectLanguage").equalsIgnoreCase("LOCALE") && localeLang != null) {
 			setLanguage(localeLang);
 			return;
 		}
 		try {
-			String iso = LanguageAPI.ipreader.city(((CraftPlayer)p ).getAddress().getAddress()).getCountry().getIsoCode();
+			String iso = LanguageAPI.ipreader.country(((CraftPlayer)p ).getAddress().getAddress()).getCountry().getIsoCode();
 			if (LanguageAPI.plugin.config.contains("iso."+iso))
 				setLanguage(Languages.valueOf(LanguageAPI.plugin.config.getString("iso."+iso)));
 			else if (localeLang != null)
@@ -50,6 +56,25 @@ public class TPlayer {
 
 	public Languages getLanguage() {
 		return language;
+	}
+	
+	private Languages getStoredLanguage() throws SQLException {
+		if (LanguageAPI.plugin.useSQL) 
+			return Languages.valueOf(LanguageAPI.plugin.sqlHelper.selectEntry(LanguageAPI.plugin.config.getString("sql.database"), LanguageAPI.plugin.config.getString("sql.table"), "language", "uuid", p.getUniqueId().toString()));
+		else {
+			Set<String> registeredUuids = null;
+			try {
+				registeredUuids = LanguageAPI.plugin.config.getConfigurationSection("players").getKeys(false);
+			} catch (NullPointerException npe) {
+				return null;
+			}
+			if (registeredUuids == null || registeredUuids.isEmpty()) return null;
+			
+			if (!registeredUuids.contains(p.getUniqueId().toString())) return null;
+			
+			return Languages.valueOf(LanguageAPI.plugin.config.getString("players."+p.getUniqueId().toString()));
+		}
+			
 	}
 
 	public void setLanguage(final Languages language) {
@@ -78,10 +103,9 @@ public class TPlayer {
 		if (LanguageAPI.plugin.useSQL) {
 			ResultSet rs = null;
 			try {
-				String columns = "uuid";
-				String values = p.getUniqueId().toString();
-				rs = LanguageAPI.plugin.sqlHelper.getSortedEntrys(LanguageAPI.plugin.config.getString("sql.database"), LanguageAPI.plugin.config.getString("sql.table"), columns, values);
-				return rs.first();
+				String condition = "uuid";
+				String value = p.getUniqueId().toString();
+				return LanguageAPI.plugin.sqlHelper.containEntry(LanguageAPI.plugin.config.getString("sql.database"), LanguageAPI.plugin.config.getString("sql.table"), condition, value);
 			} catch(SQLException exc) {
 				throw exc;
 			} finally {

@@ -1,14 +1,18 @@
 package fr.tenebrae.PlayerLanguage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import lib.PatPeter.SQLibrary.MySQL;
-
+import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -26,8 +30,8 @@ public class LanguageAPI extends JavaPlugin {
 	public static String nmsver;
 	public static LanguageAPI plugin;
 	public boolean useBanners = false;
-	public MySQL sql;
-	public InputStream ipdb;
+	public static DbManager db;
+	public File ipdb;
 	public static DatabaseReader ipreader;
 	public boolean useSQL = false;
 	public SQLHelper sqlHelper;
@@ -39,35 +43,57 @@ public class LanguageAPI extends JavaPlugin {
 		this.log = this.getLogger();
 		config = this.getConfig();
 		plugin = this;
-		this.ipdb = ClassLoader.getSystemResourceAsStream("/GeoLiteCity.dat");
-		LanguageAPI.ipreader = new DatabaseReader.Builder(this.ipdb).build();
+		File dest = new File(plugin.getDataFolder()+"/GeoLite2-Country.mmdb");
+		if (!dest.exists()) {
+		     try {
+			    InputStream link = (getClass().getResourceAsStream("/GeoLite2-Country.mmdb"));
+				Files.copy(link, dest.getAbsoluteFile().toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+				this.log.severe("Could not extract geoip data.");
+			}
+		}
+		this.ipdb = new File(plugin.getDataFolder()+"/GeoLite2-Country.mmdb");
+		try {
+			LanguageAPI.ipreader = new DatabaseReader.Builder(this.ipdb).build();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			this.log.severe("Could not load geoip data.");
+		}
 		nmsver = Bukkit.getServer().getClass().getPackage().getName();
 		nmsver = nmsver.substring(nmsver.lastIndexOf(".") + 1);
-		if (nmsver.contains("1_8")) this.useBanners = true;
+		if (nmsver.contains("1_8") || nmsver.contains("1_9")) this.useBanners = true;
 		if (config.getBoolean("sql.enabled")) {
-	    	if (Bukkit.getPluginManager().getPlugin("SQLibrary") == null) return;
-	    	if (!Bukkit.getPluginManager().getPlugin("SQLibrary").isEnabled()) return;
+			
+			LanguageAPI.db = new DbManager();
+			LanguageAPI.db.initmysql();
 			useSQL = true;
-			sql = new lib.PatPeter.SQLibrary.MySQL(Logger.getLogger("Minecraft"),
-				"[VampireZ Lobby] ",
-				config.getString("sql.host"),
-				config.getInt("sql.port"),
-				config.getString("sql.database"),
-				config.getString("sql.account"),
-				config.getString("sql.password"));
-			sql.open();
-			sqlHelper = new SQLHelper(this);
-			if (!sql.isTable(config.getString("sql.table"))) {
-				try {
-					sql.query("CREATE TABLE `"+config.getString("sql.database")+"`.`"+config.getString("sql.table")+"`("
-							+"`uuid` CHAR(36) NOT NULL,"
-							+"`name` VARCHAR(16) NOT NULL,"
-							+"`language` VARCHAR(12) NOT NULL,"
-							+ "PRIMARY KEY (`uuid`));");
-				} catch (SQLException e) {
-					e.printStackTrace();
-					this.log.severe("Could not create the table in the SQL database.");
+			sqlHelper = new SQLHelper();
+			
+			try {
+				if (!sqlHelper.containTable(config.getString("sql.database"), config.getString("sql.table"))) {
+					Connection conn = null;
+					Statement stmt = null;
+					try {
+						conn = LanguageAPI.db.getmysql();
+						stmt = conn.createStatement();
+						stmt.executeUpdate("CREATE TABLE `"+config.getString("sql.database")+"`.`"+config.getString("sql.table")+"`("
+								+"`uuid` CHAR(36) NOT NULL,"
+								+"`name` VARCHAR(16) NOT NULL,"
+								+"`language` VARCHAR(12) NOT NULL,"
+								+ "PRIMARY KEY (`uuid`));");
+					} catch(Exception e) {
+						
+					} finally {
+						if (stmt != null)
+							stmt.close();
+						if (conn != null)
+							conn.close();
+					}
 				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				this.log.severe("Could not create the table in the SQL database.");
 			}
 		} else {
 			this.log.warning("Database usage disabled. Languages will be stored in the config file.");
@@ -78,15 +104,15 @@ public class LanguageAPI extends JavaPlugin {
 	    if (config.getBoolean("config.enableCommand")) getCommand("languages").setExecutor(new Commands(this));
 	}
 	
-	public static Languages getLanguage(Player p) {
+	public static Languages getLanguage(Player p) throws SQLException {
 		return Utils.getTPlayer(p).getLanguage();
 	}
 	
-	public static String getStringLanguage(Player p) {
+	public static String getStringLanguage(Player p) throws SQLException {
 		return Utils.getTPlayer(p).getLanguage().toString();
 	}
 	
-	public static void setLanguage(Player p, Languages language) {
+	public static void setLanguage(Player p, Languages language) throws SQLException {
 		PlayerChangeLanguageEvent e = new PlayerChangeLanguageEvent(p, getLanguage(p), language);
 		PluginManager pm = Bukkit.getServer().getPluginManager();
 		pm.callEvent(e);
