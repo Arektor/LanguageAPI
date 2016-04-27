@@ -3,7 +3,7 @@
   <groupId>fr.tenebrae.PlayerLanguage</groupId>
   <artifactId>LanguageAPI</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>PixelAPI</name>
+  <name>LanguageAPI</name>
   <description>LanguageAPI</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
