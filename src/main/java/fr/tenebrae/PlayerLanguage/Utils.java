@@ -1,10 +1,12 @@
 package fr.tenebrae.PlayerLanguage;
 
+import java.sql.SQLException;
+
 import org.bukkit.entity.Player;
 
 public class Utils {
 	
-	public static TPlayer getTPlayer(Player p) {
+	public static TPlayer getTPlayer(Player p) throws SQLException {
 		TPlayer t;
 		try {
 			if (LanguageAPI.tplayers.containsKey(p)) {

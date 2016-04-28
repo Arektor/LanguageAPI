@@ -1,5 +1,7 @@
 package fr.tenebrae.PlayerLanguage;
 
+import java.sql.SQLException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -23,16 +25,26 @@ public class NametagListener implements Listener {
 		this.plugin = plugin;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClickNametag(PlayerInteractEvent evt) {
 		if (evt.getPlayer().getItemInHand() == null) return;
 		if (evt.getPlayer().getItemInHand().getType() != Material.NAME_TAG) return;
 		if (!evt.getPlayer().getItemInHand().hasItemMeta()) return;
 		if (!evt.getPlayer().getItemInHand().getItemMeta().hasDisplayName()) return;
-		if (evt.getPlayer().getItemInHand().getItemMeta().getDisplayName().startsWith("§o")) return;
+		if (evt.getPlayer().getItemInHand().getItemMeta().getDisplayName().startsWith("ï¿½o")) return;
 		
 		Player p = evt.getPlayer();
-		Inventory inv = Bukkit.createInventory(p, 2*9, plugin.config.getString("messages.languageSelection."+LanguageAPI.getLanguage(p).toString().toLowerCase()));
+		Inventory inv;
+		Languages lang = null;
+		try {
+			lang = LanguageAPI.getLanguage(p);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		inv = Bukkit.createInventory(p, 2*9, plugin.config.getString("messages.languageSelection."+lang.toString().toLowerCase()));
 		
 		ItemStack fr;
 		ItemStack en;
@@ -46,13 +58,13 @@ public class NametagListener implements Listener {
 		ItemStack ch;
 		
 		if (plugin.useBanners) {
-		
+			
 			fr = new ItemStack(Material.BANNER);
 			BannerMeta frMeta = (BannerMeta) fr.getItemMeta();
 			frMeta.setBaseColor(DyeColor.WHITE);
 			frMeta.addPattern(new Pattern(DyeColor.BLUE, PatternType.STRIPE_LEFT));
 			frMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRIPE_RIGHT));
-			frMeta.setDisplayName("§9Fra§fnç§cais");
+			frMeta.setDisplayName("Â§9FraÂ§fnÃ§Â§cais");
 			fr.setItemMeta(frMeta);
 			
 			en = new ItemStack(Material.BANNER);
@@ -64,7 +76,7 @@ public class NametagListener implements Listener {
 			enMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.DIAGONAL_RIGHT));
 			enMeta.addPattern(new Pattern(DyeColor.RED, PatternType.CROSS));
 			enMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRAIGHT_CROSS));
-			enMeta.setDisplayName("§fEn§cgl§9ish");
+			enMeta.setDisplayName("Â§fEnÂ§cglÂ§9ish");
 			en.setItemMeta(enMeta);
 			
 			nl = new ItemStack(Material.BANNER);
@@ -72,7 +84,7 @@ public class NametagListener implements Listener {
 			nlMeta.setBaseColor(DyeColor.WHITE);
 			nlMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRIPE_TOP));
 			nlMeta.addPattern(new Pattern(DyeColor.BLUE, PatternType.STRIPE_BOTTOM));
-			nlMeta.setDisplayName("§cNede§frlan§9der");
+			nlMeta.setDisplayName("Â§cNedeÂ§frlanÂ§9der");
 			nl.setItemMeta(nlMeta);
 			
 			de = new ItemStack(Material.BANNER);
@@ -80,15 +92,15 @@ public class NametagListener implements Listener {
 			deMeta.setBaseColor(DyeColor.RED);
 			deMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_TOP));
 			deMeta.addPattern(new Pattern(DyeColor.YELLOW, PatternType.STRIPE_BOTTOM));
-			deMeta.setDisplayName("§0De§cuts§ech");
+			deMeta.setDisplayName("Â§0DeÂ§cutsÂ§ech");
 			de.setItemMeta(deMeta);
-	
+
 			sp = new ItemStack(Material.BANNER);
 			BannerMeta spMeta = (BannerMeta) sp.getItemMeta();
 			spMeta.setBaseColor(DyeColor.YELLOW);
 			spMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRIPE_TOP));
 			spMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRIPE_BOTTOM));
-			spMeta.setDisplayName("§cEs§epañ§col");
+			spMeta.setDisplayName("Â§cEsÂ§epaÃ±Â§col");
 			sp.setItemMeta(spMeta);
 			
 			br = new ItemStack(Material.BANNER);
@@ -97,7 +109,7 @@ public class NametagListener implements Listener {
 			brMeta.addPattern(new Pattern(DyeColor.GREEN, PatternType.STRIPE_TOP));
 			brMeta.addPattern(new Pattern(DyeColor.YELLOW, PatternType.FLOWER));
 			brMeta.addPattern(new Pattern(DyeColor.YELLOW, PatternType.CIRCLE_MIDDLE));
-			brMeta.setDisplayName("§aPor§etug§cuês");
+			brMeta.setDisplayName("Â§aPorÂ§etugÂ§cuÃªs");
 			br.setItemMeta(brMeta);
 			
 			it = new ItemStack(Material.BANNER);
@@ -105,14 +117,14 @@ public class NametagListener implements Listener {
 			itMeta.setBaseColor(DyeColor.WHITE);
 			itMeta.addPattern(new Pattern(DyeColor.LIME, PatternType.STRIPE_LEFT));
 			itMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRIPE_RIGHT));
-			itMeta.setDisplayName("§aIta§flia§cno");
+			itMeta.setDisplayName("Â§aItaÂ§fliaÂ§cno");
 			it.setItemMeta(itMeta);
 			
 			pl = new ItemStack(Material.BANNER);
 			BannerMeta plMeta = (BannerMeta) pl.getItemMeta();
 			plMeta.setBaseColor(DyeColor.WHITE);
 			plMeta.addPattern(new Pattern(DyeColor.RED, PatternType.STRIPE_BOTTOM));
-			plMeta.setDisplayName("§fPol§cski");
+			plMeta.setDisplayName("Â§fPolÂ§cski");
 			pl.setItemMeta(plMeta);
 			
 			ar = new ItemStack(Material.BANNER);
@@ -121,7 +133,7 @@ public class NametagListener implements Listener {
 			arMeta.addPattern(new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT));
 			arMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.STRIPE_RIGHT));
 			arMeta.addPattern(new Pattern(DyeColor.RED, PatternType.TRIANGLE_TOP));
-			arMeta.setDisplayName("§0Ar§fabi§2sh");
+			arMeta.setDisplayName("Â§0ArÂ§fabiÂ§2sh");
 			ar.setItemMeta(arMeta);
 			
 			ch = new ItemStack(Material.BANNER);
@@ -133,70 +145,70 @@ public class NametagListener implements Listener {
 			chMeta.addPattern(new Pattern(DyeColor.RED, PatternType.HALF_VERTICAL));
 			chMeta.addPattern(new Pattern(DyeColor.RED, PatternType.TRIANGLE_BOTTOM));
 			chMeta.addPattern(new Pattern(DyeColor.RED, PatternType.BORDER));
-			chMeta.setDisplayName("§cChin§eese");
+			chMeta.setDisplayName("Â§cChinÂ§eese");
 			ch.setItemMeta(chMeta);
-		
-		} else {
-			fr = new ItemStack(Material.NAME_TAG);
-			ItemMeta frMeta = fr.getItemMeta();
-			frMeta.setDisplayName("§9Fra§fnç§cais");
-			fr.setItemMeta(frMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.FRENCH) fr.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+			
+			} else {
+				fr = new ItemStack(Material.NAME_TAG);
+				ItemMeta frMeta = fr.getItemMeta();
+				frMeta.setDisplayName("Â§9FraÂ§fnÃ§Â§cais");
+				fr.setItemMeta(frMeta);
+				if (lang == Languages.FRENCH) fr.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			en = new ItemStack(Material.NAME_TAG);
-			ItemMeta enMeta = en.getItemMeta();
-			enMeta.setDisplayName("§fEn§cgl§9ish");
-			en.setItemMeta(enMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.ENGLISH) en.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				en = new ItemStack(Material.NAME_TAG);
+				ItemMeta enMeta = en.getItemMeta();
+				enMeta.setDisplayName("Â§fEnÂ§cglÂ§9ish");
+				en.setItemMeta(enMeta);
+				if (lang == Languages.ENGLISH) en.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			nl = new ItemStack(Material.NAME_TAG);
-			ItemMeta nlMeta = nl.getItemMeta();
-			nlMeta.setDisplayName("§cNede§frlan§9der");
-			nl.setItemMeta(nlMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.DUTCH) nl.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				nl = new ItemStack(Material.NAME_TAG);
+				ItemMeta nlMeta = nl.getItemMeta();
+				nlMeta.setDisplayName("Â§cNedeÂ§frlanÂ§9der");
+				nl.setItemMeta(nlMeta);
+				if (lang == Languages.DUTCH) nl.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			de = new ItemStack(Material.NAME_TAG);
-			ItemMeta deMeta = de.getItemMeta();
-			deMeta.setDisplayName("§0De§cuts§ech");
-			de.setItemMeta(deMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.DEUTSCH) de.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				de = new ItemStack(Material.NAME_TAG);
+				ItemMeta deMeta = de.getItemMeta();
+				deMeta.setDisplayName("Â§0DeÂ§cutsÂ§ech");
+				de.setItemMeta(deMeta);
+				if (lang == Languages.DEUTSCH) de.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			sp = new ItemStack(Material.NAME_TAG);
-			ItemMeta spMeta = sp.getItemMeta();
-			spMeta.setDisplayName("§cEs§epañ§col");
-			sp.setItemMeta(spMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.SPANISH) sp.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				sp = new ItemStack(Material.NAME_TAG);
+				ItemMeta spMeta = sp.getItemMeta();
+				spMeta.setDisplayName("Â§cEsÂ§epaÃ±Â§col");
+				sp.setItemMeta(spMeta);
+				if (lang == Languages.SPANISH) sp.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			br = new ItemStack(Material.NAME_TAG);
-			ItemMeta brMeta = br.getItemMeta();
-			brMeta.setDisplayName("§aPor§etug§cuês");
-			br.setItemMeta(brMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.PORTOUGUESE) br.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				br = new ItemStack(Material.NAME_TAG);
+				ItemMeta brMeta = br.getItemMeta();
+				brMeta.setDisplayName("Â§aPorÂ§etugÂ§cuÃªs");
+				br.setItemMeta(brMeta);
+				if (lang == Languages.PORTOUGUESE) br.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			it = new ItemStack(Material.NAME_TAG);
-			ItemMeta itMeta = it.getItemMeta();
-			itMeta.setDisplayName("§aIta§flia§cno");
-			it.setItemMeta(itMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.ITALIAN) it.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				it = new ItemStack(Material.NAME_TAG);
+				ItemMeta itMeta = it.getItemMeta();
+				itMeta.setDisplayName("Â§aItaÂ§fliaÂ§cno");
+				it.setItemMeta(itMeta);
+				if (lang == Languages.ITALIAN) it.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			pl = new ItemStack(Material.NAME_TAG);
-			ItemMeta plMeta = it.getItemMeta();
-			plMeta.setDisplayName("§fPol§cski");
-			pl.setItemMeta(plMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.POLISH) pl.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				pl = new ItemStack(Material.NAME_TAG);
+				ItemMeta plMeta = it.getItemMeta();
+				plMeta.setDisplayName("Â§fPolÂ§cski");
+				pl.setItemMeta(plMeta);
+				if (lang == Languages.POLISH) pl.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			ar = new ItemStack(Material.NAME_TAG);
-			ItemMeta arMeta = ar.getItemMeta();
-			arMeta.setDisplayName("§0Ar§fabi§2sh");
-			ar.setItemMeta(arMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.ARABISH) ar.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				ar = new ItemStack(Material.NAME_TAG);
+				ItemMeta arMeta = ar.getItemMeta();
+				arMeta.setDisplayName("Â§0ArÂ§fabiÂ§2sh");
+				ar.setItemMeta(arMeta);
+				if (lang == Languages.ARABISH) ar.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
 
-			ch = new ItemStack(Material.NAME_TAG);
-			ItemMeta chMeta = ch.getItemMeta();
-			chMeta.setDisplayName("§cChin§eese");
-			ch.setItemMeta(chMeta);
-			if (LanguageAPI.getLanguage(p) == Languages.CHINESE) ch.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
-		}
+				ch = new ItemStack(Material.NAME_TAG);
+				ItemMeta chMeta = ch.getItemMeta();
+				chMeta.setDisplayName("Â§cChinÂ§eese");
+				ch.setItemMeta(chMeta);
+				if (lang == Languages.CHINESE) ch.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+			}
 		
 		inv.setItem(2, fr);
 		inv.setItem(3, en);
