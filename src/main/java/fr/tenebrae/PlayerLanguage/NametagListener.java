@@ -1,6 +1,5 @@
 package fr.tenebrae.PlayerLanguage;
 
-import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -37,13 +36,7 @@ public class NametagListener implements Listener {
 		Player p = evt.getPlayer();
 		Inventory inv;
 		Languages lang = null;
-		try {
-			lang = LanguageAPI.getLanguage(p);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
-		}
+		lang = LanguageAPI.getLanguage(p);
 		inv = Bukkit.createInventory(p, 2*9, plugin.config.getString("messages.languageSelection."+lang.toString().toLowerCase()));
 		
 		ItemStack fr;

@@ -3,7 +3,6 @@ package fr.tenebrae.PlayerLanguage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -104,19 +102,33 @@ public class LanguageAPI extends JavaPlugin {
 	    if (config.getBoolean("config.enableCommand")) getCommand("languages").setExecutor(new Commands(this));
 	}
 	
-	public static Languages getLanguage(Player p) throws SQLException {
-		return Utils.getTPlayer(p).getLanguage();
+	public static Languages getLanguage(Player p) {
+		try {
+			return Utils.getTPlayer(p).getLanguage();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Languages.valueOf(plugin.config.getString("config.defaultLanguage"));
+		}
 	}
 	
-	public static String getStringLanguage(Player p) throws SQLException {
-		return Utils.getTPlayer(p).getLanguage().toString();
+	public static String getStringLanguage(Player p) {
+		try {
+			return Utils.getTPlayer(p).getLanguage().toString();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return plugin.config.getString("config.defaultLanguage");
+		}
 	}
 	
-	public static void setLanguage(Player p, Languages language) throws SQLException {
-		PlayerChangeLanguageEvent e = new PlayerChangeLanguageEvent(p, getLanguage(p), language);
-		PluginManager pm = Bukkit.getServer().getPluginManager();
-		pm.callEvent(e);
-		TPlayer tp = Utils.getTPlayer(p);
-		tp.setLanguage(language);
+	public static void setLanguage(Player p, Languages language) {
+		try {
+			PlayerChangeLanguageEvent e = new PlayerChangeLanguageEvent(p, getLanguage(p), language);
+			PluginManager pm = Bukkit.getServer().getPluginManager();
+			pm.callEvent(e);
+			TPlayer tp = Utils.getTPlayer(p);
+			tp.setLanguage(language);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
